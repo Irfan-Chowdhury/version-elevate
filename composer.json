@@ -1,0 +1,26 @@
+{
+    "name": "irfan-chowdhury/version-elevate",
+    "description": "This package will notify to your buyers to upgrade their current app to the new version.",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "IrfanChowdhury\\VersionElevate\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Irfan Chowdhury",
+            "email": "irfanchowdhury80@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "extra": {
+        "laravel": {
+            "providers": [
+                "IrfanChowdhury\\VersionElevate\\VersionElevateServiceProvider"
+            ]
+        }
+    }
+}
