@@ -5,7 +5,7 @@ trait AutoUpdateTrait{
 
     protected function isServerConnectionOk()
     {
-        $ch = curl_init(config('auto_update.demo_url').'/fetch-data-general');
+        $ch = curl_init(config('version_elevate.demo_url').'/fetch-data-general');
         // $ch = curl_init("https://jsonplaceholder.typicode.com/todos");
 
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -21,7 +21,7 @@ trait AutoUpdateTrait{
 
     protected function getDemoGeneralDataByCURL()
     {
-        $demoURL = config('auto_update.demo_url');
+        $demoURL = config('version_elevate.demo_url');
         $curl = curl_init();
         curl_setopt_array($curl, [
             CURLOPT_RETURNTRANSFER => 1,
@@ -64,8 +64,8 @@ trait AutoUpdateTrait{
 
         $data = $this->getDemoGeneralDataByCURL();
         $productMode = $data->general->product_mode;
-        $clientVersionNumber = $this->stringToNumberConvert(config('auto_update.version'));
-        $clientBugNo = intval(config('auto_update.bug_no'));
+        $clientVersionNumber = $this->stringToNumberConvert(config('version_elevate.version'));
+        $clientBugNo = intval(config('version_elevate.bug_no'));
         $demoVersionString      = $data->general->demo_version;
         $demoVersionNumber      = $this->stringToNumberConvert($demoVersionString);
         $demoBugNo              = $data->general->demo_bug_no;
@@ -89,7 +89,7 @@ trait AutoUpdateTrait{
 
     public function getVersionUpgradeDetails()
     {
-        $demoURL = config('auto_update.demo_url');
+        $demoURL = config('version_elevate.demo_url');
 
         $curl = curl_init();
         curl_setopt_array($curl, [
@@ -105,7 +105,7 @@ trait AutoUpdateTrait{
 
     public function getBugUpdateDetails()
     {
-        $demoURL = config('auto_update.demo_url');
+        $demoURL = config('version_elevate.demo_url');
 
         $curl = curl_init();
         curl_setopt_array($curl, [

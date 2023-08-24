@@ -2,6 +2,7 @@
 
 namespace IrfanChowdhury\VersionElevate;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Route;
 
 
 class VersionElevateServiceProvider extends ServiceProvider
@@ -15,7 +16,13 @@ class VersionElevateServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
+        Route::middleware('web')->group(function () {
+            $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
+        });
+        Route::middleware('api')->prefix('api')->group(function () {
+            $this->loadRoutesFrom(__DIR__ . '/../routes/api.php');
+        });
+
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'version-elevate');
         $this->loadTranslationsFrom(__DIR__.'/../lang', 'version-elevate');
 

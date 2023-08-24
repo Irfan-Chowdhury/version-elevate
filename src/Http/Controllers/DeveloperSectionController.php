@@ -37,8 +37,8 @@ class DeveloperSectionController
             "minimum_required_version" => $request->minimum_required_version,
         ];
 
-        // $this->dataWriteInENVFile('VERSION',$request->version);
-        // $this->dataWriteInENVFile('BUG_NO',$request->bug_no);
+        $this->dataWriteInENVFile('VERSION',$request->version);
+        $this->dataWriteInENVFile('BUG_NO',$request->bug_no);
 
         $control =[
             'version_upgrade'=>[
@@ -62,4 +62,43 @@ class DeveloperSectionController
             'type' => 'success',
         ]);
     }
+
+    public function versionUpgradeSetting(Request $request)
+    {
+        $data = $this->filesAndLogManage($request);
+
+        // Write Array in JSON File
+        $this->wrtieDataInJSON($data, 'track/fetch-data-upgrade.json');
+        return redirect()->back()->with([
+            'message' => 'Data Submited Successfully',
+            'type' => 'success',
+        ]);
+    }
+
+    private function filesAndLogManage($request)
+    {
+        $data = [];
+        if ($request->file_name) {
+            foreach($request->file_name as $item) {
+                $data['files'][]= [
+                    'file_name' => $item
+                ];
+            }
+        }
+
+        if ($request->text) {
+            foreach($request->text as $item) {
+                $data['logs'][]= [
+                    'text' => $item
+                ];
+            }
+        }
+
+        if ($request->short_note) {
+            $data['short_note'] = $request->short_note;
+        }
+
+        return $data;
+    }
+
 }
