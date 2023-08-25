@@ -19,13 +19,13 @@ trait AutoUpdateTrait{
         return isset($result) && !empty($result) ? true : false ;
     }
 
-    protected function getDemoGeneralDataByCURL()
+    protected function getDemoGeneralDataByCURL() : object
     {
-        $demoURL = config('version_elevate.demo_url');
+        $domainURL = config('version_elevate.domain_url');
         $curl = curl_init();
         curl_setopt_array($curl, [
             CURLOPT_RETURNTRANSFER => 1,
-            CURLOPT_URL => $demoURL.'/fetch-data-general',
+            CURLOPT_URL => $domainURL.'/api/fetch-data-general',
         ]);
         $response = curl_exec($curl);
         curl_close($curl);

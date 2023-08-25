@@ -6,5 +6,7 @@ return
         'version' => env('VERSION'),
         'bug_no' => env('BUG_NO'),
         'demo_url' => 'https://peopleprohrm.com/demo/api',
+        'domain_url' => 'https://peopleprohrm.com/demo',
+        // 'files_directory' => 'https://peopleprohrm.com/',
     ];
 ?>

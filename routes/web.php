@@ -20,15 +20,20 @@ use IrfanChowdhury\VersionElevate\Http\Controllers\DashboardController;
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
 // Auto Update
-Route::group(['prefix' => 'developer-section'], function () {
-    Route::get('/', [DeveloperSectionController::class, 'index'])->name('developer-section.index');
-    Route::post('/', [DeveloperSectionController::class, 'submit'])->name('developer-section.submit');
-    Route::post('/bug-update-setting', [DeveloperSectionController::class, 'bugUpdateSetting'])->name('bug-update-setting.submit');
-    Route::post('/version-upgrade-setting', [DeveloperSectionController::class, 'versionUpgradeSetting'])->name('version-upgrade-setting.submit');
+Route::controller(DeveloperSectionController::class)->group(function () {
+    Route::prefix('developer-section')->group(function () {
+        Route::get('/', 'index')->name('developer-section.index');
+        Route::post('/', 'submit')->name('developer-section.submit');
+        Route::post('/bug-update-setting', 'bugUpdateSetting')->name('bug-update-setting.submit');
+        Route::post('/version-upgrade-setting', 'versionUpgradeSetting')->name('version-upgrade-setting.submit');
+    });
 });
 
-Route::get('/new-release', [ClientAutoUpdateController::class, 'newVersionReleasePage'])->name('new-release');
-Route::get('/bugs', [ClientAutoUpdateController::class, 'bugUpdatePage'])->name('bug-update-page');
-// Action on Client server
-Route::post('version-upgrade', [ClientAutoUpdateController::class, 'versionUpgrade'])->name('version-upgrade');
-Route::post('bug-update', [ClientAutoUpdateController::class, 'bugUpdate'])->name('bug-update');
+
+Route::controller(ClientAutoUpdateController::class)->group(function () {
+    Route::get('/new-release', 'newVersionReleasePage')->name('new-release');
+    Route::get('/bugs', 'bugUpdatePage')->name('bug-update-page');
+    // Action on Client server
+    Route::post('version-upgrade', 'versionUpgrade')->name('version-upgrade');
+    Route::post('bug-update', 'bugUpdate')->name('bug-update');
+});

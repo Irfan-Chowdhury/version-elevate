@@ -18,16 +18,16 @@ class DashboardController extends Controller
         return view('version-elevate::dashboard', compact('alertBugEnable','alertVersionUpgradeEnable'));
     }
 
-    protected function getDemoGeneralDataByCURL()
-    {
-        $demoURL = config('version_elevate.demo_url');
-        $curl = curl_init();
-        curl_setopt_array($curl, [
-            CURLOPT_RETURNTRANSFER => 1,
-            CURLOPT_URL => $demoURL.'/fetch-data-general',
-        ]);
-        $response = curl_exec($curl);
-        curl_close($curl);
-        return json_decode($response, false);
-    }
+    // protected function getDemoGeneralDataByCURL() : object
+    // {
+    //     $demoURL = config('version_elevate.domain_url');
+    //     $curl = curl_init();
+    //     curl_setopt_array($curl, [
+    //         CURLOPT_RETURNTRANSFER => 1,
+    //         CURLOPT_URL => $demoURL.'/api/fetch-data-general',
+    //     ]);
+    //     $response = curl_exec($curl);
+    //     curl_close($curl);
+    //     return json_decode($response, false);
+    // }
 }
