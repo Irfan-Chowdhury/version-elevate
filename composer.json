@@ -1,7 +1,13 @@
 {
     "name": "irfan-chowdhury/version-elevate",
-    "description": "This package will notify to your buyers to upgrade their current app to the new version.",
+    "description": "This package will notify the buyers about the new version and it can upgrade their current app to the new version.",
+    "keywords": [
+        "auto-update",
+        "version auto update",
+        "new version notify"
+    ],
     "type": "library",
+    "homepage": "https://github.com/Irfan-Chowdhury/version-elevate",
     "license": "MIT",
     "autoload": {
         "psr-4": {
@@ -11,11 +17,15 @@
     "authors": [
         {
             "name": "Irfan Chowdhury",
-            "email": "irfanchowdhury80@gmail.com"
+            "email": "irfanchowdhury80@gmail.com",
+            "role": "Developer"
         }
     ],
     "minimum-stability": "dev",
-    "require": {},
+    "require": {
+        "php": ">=7.4",
+        "laravel/framework": ">=8.0"
+    },
     "extra": {
         "laravel": {
             "providers": [

@@ -18,7 +18,9 @@ class DeveloperSectionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'version' => 'required'
+            'version' => 'required',
+            'minimum_required_version' => 'required',
+            'version_upgrade_base_url' => 'required|url',
         ];
     }
 }

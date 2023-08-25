@@ -24,7 +24,6 @@ Route::controller(DeveloperSectionController::class)->group(function () {
     Route::prefix('developer-section')->group(function () {
         Route::get('/', 'index')->name('developer-section.index');
         Route::post('/', 'submit')->name('developer-section.submit');
-        Route::post('/bug-update-setting', 'bugUpdateSetting')->name('bug-update-setting.submit');
         Route::post('/version-upgrade-setting', 'versionUpgradeSetting')->name('version-upgrade-setting.submit');
     });
 });
@@ -32,8 +31,5 @@ Route::controller(DeveloperSectionController::class)->group(function () {
 
 Route::controller(ClientAutoUpdateController::class)->group(function () {
     Route::get('/new-release', 'newVersionReleasePage')->name('new-release');
-    Route::get('/bugs', 'bugUpdatePage')->name('bug-update-page');
-    // Action on Client server
-    Route::post('version-upgrade', 'versionUpgrade')->name('version-upgrade');
-    Route::post('bug-update', 'bugUpdate')->name('bug-update');
+    Route::post('version-upgrade', 'versionUpgradeProcees')->name('version-upgrade');
 });

@@ -13,21 +13,7 @@ class DashboardController extends Controller
     public function index()
     {
         $autoUpdateData = $this->general();
-        $alertBugEnable =  $autoUpdateData['alertBugEnable'];
         $alertVersionUpgradeEnable = $autoUpdateData['alertVersionUpgradeEnable'];
-        return view('version-elevate::dashboard', compact('alertBugEnable','alertVersionUpgradeEnable'));
+        return view('version-elevate::dashboard', compact('alertVersionUpgradeEnable'));
     }
-
-    // protected function getDemoGeneralDataByCURL() : object
-    // {
-    //     $demoURL = config('version_elevate.domain_url');
-    //     $curl = curl_init();
-    //     curl_setopt_array($curl, [
-    //         CURLOPT_RETURNTRANSFER => 1,
-    //         CURLOPT_URL => $demoURL.'/api/fetch-data-general',
-    //     ]);
-    //     $response = curl_exec($curl);
-    //     curl_close($curl);
-    //     return json_decode($response, false);
-    // }
 }

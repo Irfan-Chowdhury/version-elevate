@@ -61,8 +61,7 @@ class DemoAutoUpdateController extends Controller
                 'demo_bug_no'               => $this->demo_bug_no,
                 'latest_version_upgrade_enable'=> $this->latest_version_upgrade_enable,
                 'latest_version_db_migrate_enable' => $this->latest_version_db_migrate_enable,
-                'bug_update_enable'         => $this->bug_update_enable,
-                'bug_db_migrate_enable'     => $this->bug_db_migrate_enable,
+                'version_upgrade_base_url'  => $this->version_upgrade_base_url,
             ],
         ];
         return response()->json($data,201);
@@ -78,16 +77,4 @@ class DemoAutoUpdateController extends Controller
         }
         return response()->json($data,201);
     }
-
-    public function fetchDataForBugs()
-    {
-        $path = base_path('track/fetch-data-bug.json');
-        $data = null;
-        if (File::exists($path)) {
-            $json_file = File::get($path);
-            $data = json_decode($json_file);
-        }
-        return response()->json($data,201);
-    }
-
 }

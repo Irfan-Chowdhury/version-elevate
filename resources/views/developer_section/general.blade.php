@@ -21,7 +21,7 @@
             <div class="form-group row">
                 <label class="col-sm-4 col-form-label">@lang('version-elevate::file.Version') <span class="text-danger">*</span></label>
                 <div class="col-sm-8">
-                    <input type="text" name="version" class="form-control" value="{{env('VERSION')}}">
+                    <input type="text" required name="version" class="form-control" value="{{env('VERSION')}}">
                 </div>
             </div>
 

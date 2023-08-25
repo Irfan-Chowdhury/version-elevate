@@ -20,74 +20,46 @@ class ClientAutoUpdateController extends Controller
         $getVersionUpgradeDetails = $this->getVersionUpgradeDetails();
         $newVersion = $autoUpdateData['generalData']->general->demo_version ?? 0;
         $alertVersionUpgradeEnable = $autoUpdateData['alertVersionUpgradeEnable'];
+        
         return view('version-elevate::version_upgrade.index', compact('getVersionUpgradeDetails','alertVersionUpgradeEnable','newVersion'));
     }
 
-    public function bugUpdatePage()
-    {
-        $autoUpdateData = $this->general();
-        $getBugUpdateDetails = $this->getBugUpdateDetails();
-        $bugNotificationEnable = $autoUpdateData['alertBugEnable'];
-        return view('version-elevate::bug_update.index', compact('getBugUpdateDetails','bugNotificationEnable'));
-    }
-
     /*
-    |==============================
+    |--------------------------------------------------------------------------
     | Action on Client Server
-    |==============================
+    |--------------------------------------------------------------------------
+    |
+    | matchFilesFromServerBeforeExecute() -> from server it will be match with fetch-data-upgrade.json.
+    | And check all before execute files
+    | fileTransferProcess() -> it will send files from "your_domain.com" server to client server
+    |
     */
 
-    public function versionUpgrade() {
-        return $this->actionTransfer('version_upgrade');
-    }
-
-    public function bugUpdate()
-    {
-        return $this->actionTransfer('bug_update');
-    }
-
-    /*
-    |============================================================================================================
-    | matchFilesFromServerBeforeExecute() -> from server it will be match with fetch-data-upgrade.json and fetch-data-bug.json file. And Check all Before Execute Files
-    | fileTransferProcess() -> it will send files from peopleprohrm.com server to client setver
-    |============================================================================================================
-    */
-
-    protected function actionTransfer($action_type)
+    public function versionUpgradeProcees()
     {
         $general = $this->general();
         $trackGeneralArr = $general['generalData']->general;
+        $versionUpgradeBaseURL = $general['generalData']->general->version_upgrade_base_url;
 
-        if($action_type =='version_upgrade'){
-            $message = 'Version Upgraded Successfully !!!';
-            $base_url = 'https://peopleprohrm.com/version_upgrade_files/'; //$this->version_upgrade_base_url;
-            $getFilesAndLogsDetail = $this->getVersionUpgradeDetails();
-        }else if($action_type == 'bug_update') {
-            $message = 'Updated successfully';
-            $base_url = 'https://peopleprohrm.com/bug_update_files/'; //$this->bug_update_base_url;
-            $getFilesAndLogsDetail = $this->getBugUpdateDetails();
-        }
-
-
+        $getFilesAndLogsDetail = $this->getVersionUpgradeDetails();
         try {
-            $this->matchFilesFromServerBeforeExecute($getFilesAndLogsDetail, $trackGeneralArr, $base_url);
+            $this->matchFilesFromServerBeforeExecute($getFilesAndLogsDetail, $trackGeneralArr, $versionUpgradeBaseURL);
 
             // Start Execute
             if ($getFilesAndLogsDetail && $trackGeneralArr) {
-                $this->fileTransferProcess($getFilesAndLogsDetail, $base_url);
+                $this->fileTransferProcess($getFilesAndLogsDetail, $versionUpgradeBaseURL);
 
-                if($action_type =='version_upgrade'){
-                    $this->dataWriteInENVFile('VERSION',$trackGeneralArr->demo_version);
-                }else if($action_type == 'bug_update') {
-                    $this->dataWriteInENVFile('BUG_NO',$trackGeneralArr->demo_bug_no);
-                }
+                $this->dataWriteInENVFile('VERSION',$trackGeneralArr->demo_version);
 
-                if (($action_type =='version_upgrade' && $trackGeneralArr->latest_version_db_migrate_enable==true) || ($action_type == 'bug_update' && $trackGeneralArr->bug_db_migrate_enable==true) ){
+                if ($trackGeneralArr->latest_version_db_migrate_enable==true) {
                     Artisan::call('migrate');
                 }
                 Artisan::call('optimize:clear');
-                $this->setSuccessMessage($message);
-                return redirect()->back();
+
+                return redirect()->back()->with([
+                    'message' => 'Version Upgraded Successfully !!!',
+                    'type' => 'success',
+                ]);
             }
             else{
                 throw new Exception("Something wrong. Please contact with support team.");
@@ -98,11 +70,11 @@ class ClientAutoUpdateController extends Controller
         }
     }
 
-    protected function matchFilesFromServerBeforeExecute($getFilesAndLogsDetail, $trackGeneralArr, $base_url)
+    protected function matchFilesFromServerBeforeExecute($getFilesAndLogsDetail, $trackGeneralArr, $versionUpgradeBaseURL)
     {
         if ($getFilesAndLogsDetail && $trackGeneralArr) {
             foreach ($getFilesAndLogsDetail->files as $value) {
-                $remote_file_url  = $base_url.$value->file_name;
+                $remote_file_url  = $versionUpgradeBaseURL.$value->file_name;
                 $array = @get_headers($remote_file_url);
                 $string = $array[0];
                 if(!strpos($string, "200")) {
@@ -114,10 +86,10 @@ class ClientAutoUpdateController extends Controller
         }
     }
 
-    protected function fileTransferProcess($getFilesAndLogsDetail, $base_url)
+    protected function fileTransferProcess($getFilesAndLogsDetail, $versionUpgradeBaseURL)
     {
         foreach ($getFilesAndLogsDetail->files as $value) {
-            $remote_file_url  = $base_url.$value->file_name;
+            $remote_file_url  = $versionUpgradeBaseURL.$value->file_name;
             $remote_file_name = pathinfo($remote_file_url)['basename'];
             $local_file = base_path('/'.$remote_file_name);
             $copy = copy($remote_file_url, $local_file);

@@ -3,10 +3,10 @@ namespace IrfanChowdhury\VersionElevate\Traits;
 
 trait AutoUpdateTrait{
 
+
     protected function isServerConnectionOk()
     {
-        $ch = curl_init(config('version_elevate.demo_url').'/fetch-data-general');
-        // $ch = curl_init("https://jsonplaceholder.typicode.com/todos");
+        $ch = curl_init(config('version_elevate.domain_url').'/api/fetch-data-general');
 
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_TIMEOUT, 10); // Set the timeout to 10 seconds
@@ -16,10 +16,10 @@ trait AutoUpdateTrait{
 
         $result = json_decode($response);
 
-        return isset($result) && !empty($result) ? true : false ;
+        return isset($result) && !empty($result) ? 'true' : 'false' ;
     }
 
-    protected function getDemoGeneralDataByCURL() : object
+    protected function getDemoGeneralDataByCURL()
     {
         $domainURL = config('version_elevate.domain_url');
         $curl = curl_init();
@@ -53,48 +53,38 @@ trait AutoUpdateTrait{
     {
         $returnData = [];
         $alertVersionUpgradeEnable = false;
-        $alertBugEnable = false;
 
         $isServerConnectionOk = $this->isServerConnectionOk();
         if (!$isServerConnectionOk) {
             $returnData['alertVersionUpgradeEnable'] = $alertVersionUpgradeEnable;
-            $returnData['alertBugEnable'] = $alertBugEnable;
             return $returnData;
         };
 
         $data = $this->getDemoGeneralDataByCURL();
         $productMode = $data->general->product_mode;
         $clientVersionNumber = $this->stringToNumberConvert(config('version_elevate.version'));
-        $clientBugNo = intval(config('version_elevate.bug_no'));
         $demoVersionString      = $data->general->demo_version;
         $demoVersionNumber      = $this->stringToNumberConvert($demoVersionString);
-        $demoBugNo              = $data->general->demo_bug_no;
         $minimumRequiredVersion = $this->stringToNumberConvert($data->general->minimum_required_version);
         $latestVersionUpgradeEnable   = $data->general->latest_version_upgrade_enable;
-        $bugUpdateEnable        = $data->general->bug_update_enable;
 
         if ($clientVersionNumber >= $minimumRequiredVersion && $latestVersionUpgradeEnable===true && $productMode==='DEMO' && $demoVersionNumber > $clientVersionNumber) {
             $alertVersionUpgradeEnable = true;
         }
 
-        if ($clientVersionNumber >= $minimumRequiredVersion && $demoVersionNumber === $clientVersionNumber && $demoBugNo > $clientBugNo && $bugUpdateEnable ===true && $productMode==='DEMO') {
-            $alertBugEnable = true;
-        }
-
         $returnData['generalData'] = $data;
         $returnData['alertVersionUpgradeEnable'] = $alertVersionUpgradeEnable;
-        $returnData['alertBugEnable'] = $alertBugEnable;
         return $returnData;
     }
 
     public function getVersionUpgradeDetails()
     {
-        $demoURL = config('version_elevate.demo_url');
+        $demoURL = config('version_elevate.domain_url');
 
         $curl = curl_init();
         curl_setopt_array($curl, [
             CURLOPT_RETURNTRANSFER => 1,
-            CURLOPT_URL => $demoURL.'/fetch-data-upgrade',
+            CURLOPT_URL => $demoURL.'/api/fetch-data-upgrade',
         ]);
         $response = curl_exec($curl);
         curl_close($curl);
@@ -103,21 +93,21 @@ trait AutoUpdateTrait{
         return $data;
     }
 
-    public function getBugUpdateDetails()
-    {
-        $demoURL = config('version_elevate.demo_url');
+    // public function getBugUpdateDetails()
+    // {
+    //     $demoURL = config('version_elevate.domain_url');
 
-        $curl = curl_init();
-        curl_setopt_array($curl, [
-            CURLOPT_RETURNTRANSFER => 1,
-            CURLOPT_URL => $demoURL.'/fetch-data-bugs',
-        ]);
-        $response = curl_exec($curl);
-        curl_close($curl);
-        $data = json_decode($response, false);
+    //     $curl = curl_init();
+    //     curl_setopt_array($curl, [
+    //         CURLOPT_RETURNTRANSFER => 1,
+    //         CURLOPT_URL => $demoURL.'/api/fetch-data-bugs',
+    //     ]);
+    //     $response = curl_exec($curl);
+    //     curl_close($curl);
+    //     $data = json_decode($response, false);
 
-        return $data;
-    }
+    //     return $data;
+    // }
 
     private function stringToNumberConvert($dataString) {
         $myArray = explode(".", $dataString);
