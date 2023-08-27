@@ -25,7 +25,7 @@ return
         |
         */
 
-        'domain_url' => env('DOMAIN_URL','https://your_domain.com'),
+        'app_url' => env('APP_URL','https://your_domain.com'),
 
     ];
 

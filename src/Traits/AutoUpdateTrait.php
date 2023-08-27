@@ -6,7 +6,7 @@ trait AutoUpdateTrait{
 
     protected function isServerConnectionOk()
     {
-        $ch = curl_init(config('version_elevate.domain_url').'/api/fetch-data-general');
+        $ch = curl_init(config('version_elevate.app_url').'/api/fetch-data-general');
 
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_TIMEOUT, 10); // Set the timeout to 10 seconds
@@ -21,7 +21,7 @@ trait AutoUpdateTrait{
 
     protected function getDemoGeneralDataByCURL()
     {
-        $domainURL = config('version_elevate.domain_url');
+        $domainURL = config('version_elevate.app_url');
         $curl = curl_init();
         curl_setopt_array($curl, [
             CURLOPT_RETURNTRANSFER => 1,
@@ -79,7 +79,7 @@ trait AutoUpdateTrait{
 
     public function getVersionUpgradeDetails()
     {
-        $demoURL = config('version_elevate.domain_url');
+        $demoURL = config('version_elevate.app_url');
 
         $curl = curl_init();
         curl_setopt_array($curl, [
@@ -95,7 +95,7 @@ trait AutoUpdateTrait{
 
     // public function getBugUpdateDetails()
     // {
-    //     $demoURL = config('version_elevate.domain_url');
+    //     $demoURL = config('version_elevate.app_url');
 
     //     $curl = curl_init();
     //     curl_setopt_array($curl, [
