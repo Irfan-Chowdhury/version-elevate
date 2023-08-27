@@ -27,6 +27,7 @@ class VersionElevateServiceProvider extends ServiceProvider
         $this->loadTranslationsFrom(__DIR__.'/../lang', 'version-elevate');
 
         $this->publishes([
+            __DIR__.'/../config/version_elevate.php' => config_path('version_elevate.php'),
             __DIR__.'/../resources/views' => resource_path('views/vendor/version-elevate'),
             __DIR__.'/../lang' => $this->app->langPath('vendor/version-elevate'),
         ]);

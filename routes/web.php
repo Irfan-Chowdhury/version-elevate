@@ -17,7 +17,7 @@ use IrfanChowdhury\VersionElevate\Http\Controllers\DashboardController;
 */
 
 
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+Route::get('/version-elevate-dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
 // Auto Update
 Route::controller(DeveloperSectionController::class)->group(function () {
@@ -27,7 +27,6 @@ Route::controller(DeveloperSectionController::class)->group(function () {
         Route::post('/version-upgrade-setting', 'versionUpgradeSetting')->name('version-upgrade-setting.submit');
     });
 });
-
 
 Route::controller(ClientAutoUpdateController::class)->group(function () {
     Route::get('/new-release', 'newVersionReleasePage')->name('new-release');

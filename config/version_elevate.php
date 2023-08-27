@@ -4,22 +4,29 @@ return
     [
         'product_mode' => env('PRODUCT_MODE'),
 
-        'version' => env('VERSION'),
+        /*
+        |--------------------------------------------------------------------------
+        | Version Number
+        |--------------------------------------------------------------------------
+        |
+        | You have to follow standard version number format (X.Y.Z) such as version 1.2.4
+        | Put the version env('VERSION')
+        |
+        */
 
-        // 'bug_no' => env('BUG_NO'),
-        'demo_url' => 'https://peopleprohrm.com/demo/api',
-        'domain_url' => 'https://peopleprohrm.com/demo',
+        'version' => env('VERSION','1.0.0'),
 
         /*
         |--------------------------------------------------------------------------
-        | Files Directory Name
+        | Domain URL
         |--------------------------------------------------------------------------
         |
-        | For version upgrade, you need to keep relevant files in a directory on your server.
-        | If your website url is www.xyz.com, and file directory name is "updated_files",
-        | then your url will be "www.xyz.com/updated_files"
+        | You have to setup your domain name before using this package
         |
         */
-        'directory_name' => 'version_upgrade_files',
+
+        'domain_url' => env('DOMAIN_URL','https://your_domain.com'),
+
     ];
-?>
+
+
