@@ -33,7 +33,7 @@ Service Provider Registration In `config/app.php`, add in providers array -
     /*
     * Package Service Providers...
     */
-    Irfan\LaravelUniqueSlug\UniqueSlugServiceProvider::class,
+    IrfanChowdhury\VersionElevate\VersionElevateServiceProvider::class,
 ],
 ```
 
