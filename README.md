@@ -120,5 +120,5 @@ Packagist : https://packagist.org/packages/irfan-chowdhury/version-elevate
 ## Credits
 - Structure follow from - [spatie/package-skeleton-laravel](https://github.com/spatie/package-skeleton-laravel)
 - Laravel Testing Helper for Packages Development:  [testbench](https://github.com/orchestral/testbench)
-- [PHP
-testing framework](https://pestphp.com/) 
+- PHP Testing Framework : [PEST](https://pestphp.com/) 
+- Coding Style : [Laravel Pint](https://laravel.com/docs/10.x/pint)
