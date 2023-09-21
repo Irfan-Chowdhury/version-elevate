@@ -1,12 +1,14 @@
 <?php
+
+declare(strict_types=1);
+
 namespace IrfanChowdhury\VersionElevate\Traits;
 
-trait AutoUpdateTrait{
-
-
-    protected function isServerConnectionOk()
+trait AutoUpdateTrait
+{
+    protected function isServerConnectionOk($targetURL): bool
     {
-        $ch = curl_init(config('version_elevate.app_url').'/api/fetch-data-general');
+        $ch = curl_init($targetURL.'/api/fetch-data-general');
 
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_TIMEOUT, 10); // Set the timeout to 10 seconds
@@ -16,19 +18,19 @@ trait AutoUpdateTrait{
 
         $result = json_decode($response);
 
-        return isset($result) && !empty($result) ? 'true' : 'false' ;
+        return isset($result) && ! empty($result) ? true : false;
     }
 
-    protected function getDemoGeneralDataByCURL()
+    protected function getDemoGeneralDataByCURL($targetURL): ?object
     {
-        $domainURL = config('version_elevate.app_url');
         $curl = curl_init();
         curl_setopt_array($curl, [
             CURLOPT_RETURNTRANSFER => 1,
-            CURLOPT_URL => $domainURL.'/api/fetch-data-general',
+            CURLOPT_URL => $targetURL.'/api/fetch-data-general',
         ]);
         $response = curl_exec($curl);
         curl_close($curl);
+
         return json_decode($response, false);
     }
 
@@ -39,13 +41,6 @@ trait AutoUpdateTrait{
     |       2. latestVersionUpgradeEnable === true
     |       3. productMode==='DEMO'
     |       4. demoVersionNumber > clientVersionNumber
-    |
-    | # For Bug Update - you should follow these point in DEMO :
-    |       1. clientVersionNumber >= minimumRequiredVersion
-    |       2. demoVersionNumber === clientVersionNumber
-    |       3. demoBugNo > clientBugNo
-    |       4. bugUpdateEnable === true
-    |       5. productMode === 'DEMO'
     |===========================================================
     */
 
@@ -53,33 +48,70 @@ trait AutoUpdateTrait{
     {
         $returnData = [];
         $alertVersionUpgradeEnable = false;
+        $targetURL = config('version_elevate.target_url');
 
-        $isServerConnectionOk = $this->isServerConnectionOk();
-        if (!$isServerConnectionOk) {
+        $isServerConnectionOk = $this->isServerConnectionOk($targetURL);
+
+        if (! $isServerConnectionOk) {
             $returnData['alertVersionUpgradeEnable'] = $alertVersionUpgradeEnable;
+
             return $returnData;
-        };
-
-        $data = $this->getDemoGeneralDataByCURL();
-        $productMode = $data->general->product_mode;
-        $clientVersionNumber = $this->stringToNumberConvert(config('version_elevate.version'));
-        $demoVersionString      = $data->general->demo_version;
-        $demoVersionNumber      = $this->stringToNumberConvert($demoVersionString);
-        $minimumRequiredVersion = $this->stringToNumberConvert($data->general->minimum_required_version);
-        $latestVersionUpgradeEnable   = $data->general->latest_version_upgrade_enable;
-
-        if ($clientVersionNumber >= $minimumRequiredVersion && $latestVersionUpgradeEnable===true && $productMode==='DEMO' && $demoVersionNumber > $clientVersionNumber) {
-            $alertVersionUpgradeEnable = true;
         }
+
+        $data = $this->getDemoGeneralDataByCURL($targetURL);
+        $productMode = $data->general->product_mode;
+        $minimumRequiredVersion = $data->general->minimum_required_version;
+        $clientVersionNumber = config('version_elevate.version');
+        $demoVersionNumber = $data->general->demo_version;
+        $latestVersionUpgradeEnable = $data->general->latest_version_upgrade_enable;
+
+        $alertVersionUpgradeEnable = $this->isAlertVersionUpgradeEnable($latestVersionUpgradeEnable, $productMode, $minimumRequiredVersion, $clientVersionNumber, $demoVersionNumber);
 
         $returnData['generalData'] = $data;
         $returnData['alertVersionUpgradeEnable'] = $alertVersionUpgradeEnable;
+
         return $returnData;
+    }
+
+    protected function isAlertVersionUpgradeEnable($latestVersionUpgradeEnable, $productMode, $minimumRequiredVersion, $clientVersionNumber, $demoVersionNumber)
+    {
+        $isClientExceedMinimumRequiredVersion = $this->isClientExceedMinimumRequiredVersion($minimumRequiredVersion, $clientVersionNumber);
+        $isTargetedVersionGreater = self::compareVersionNumber($clientVersionNumber, $demoVersionNumber);
+
+        if ($latestVersionUpgradeEnable && $productMode === 'DEMO' && $isClientExceedMinimumRequiredVersion && $isTargetedVersionGreater) {
+            return true;
+        }
+
+        return false;
+    }
+
+    protected function isClientExceedMinimumRequiredVersion($minimumRequiredVersion, $clientVersionNumber): bool
+    {
+        if ($minimumRequiredVersion === $clientVersionNumber) {
+            return true;
+        } else {
+            return self::compareVersionNumber($minimumRequiredVersion, $clientVersionNumber);
+        }
+    }
+
+    protected static function compareVersionNumber($clientVersionNumber, $demoVersionNumber): bool
+    {
+        $clientVersionArray = explode('.', $clientVersionNumber);
+        $demoVersionArray = explode('.', $demoVersionNumber);
+        $isGreater = false;
+        for ($i = 0; $i < count($demoVersionArray); $i++) {
+            if ($demoVersionArray[$i] > $clientVersionArray[$i]) {
+                $isGreater = true;
+                break;
+            }
+        }
+
+        return $isGreater;
     }
 
     public function getVersionUpgradeDetails()
     {
-        $demoURL = config('version_elevate.app_url');
+        $demoURL = config('version_elevate.target_url');
 
         $curl = curl_init();
         curl_setopt_array($curl, [
@@ -93,48 +125,15 @@ trait AutoUpdateTrait{
         return $data;
     }
 
-    // public function getBugUpdateDetails()
-    // {
-    //     $demoURL = config('version_elevate.app_url');
-
-    //     $curl = curl_init();
-    //     curl_setopt_array($curl, [
-    //         CURLOPT_RETURNTRANSFER => 1,
-    //         CURLOPT_URL => $demoURL.'/api/fetch-data-bugs',
-    //     ]);
-    //     $response = curl_exec($curl);
-    //     curl_close($curl);
-    //     $data = json_decode($response, false);
-
-    //     return $data;
-    // }
-
-    private function stringToNumberConvert($dataString) {
-        $myArray = explode(".", $dataString);
-        $versionString = "";
-        foreach($myArray as $element) {
-          $versionString .= $element;
+    private function stringToNumberConvert($dataString)
+    {
+        $myArray = explode('.', $dataString);
+        $versionString = '';
+        foreach ($myArray as $element) {
+            $versionString .= $element;
         }
         $versionConvertNumber = intval($versionString);
+
         return $versionConvertNumber;
     }
 }
-
-
-
-// echo $minimumRequiredVersion.'</br>';
-// echo $demoVersionNumber.'</br>';
-// echo $clientVersionNumber.'</br>';
-// echo $demoBugNo.'</br>';
-// echo $clientBugNo.'</br>';
-// echo $bugUpdateEnable.'</br>';
-// echo $productMode.'</br>';
-// return;
-// echo $clientVersionNumber.'</br>';
-// echo $minimumRequiredVersion.'</br>';
-// echo $latestVersionUpgradeEnable.'</br>';
-// echo $productMode.'</br>';
-// echo $demoVersionNumber.'</br>';
-
-// $clientVersionNumber = 120; // have to change when testing on bug 119,120
-// $demoBugNo           = 1021;

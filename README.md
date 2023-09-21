@@ -23,11 +23,12 @@ composer require irfan-chowdhury/version-elevate
 
 ## Configuration
 After completing the installation, you can publish with:
-```php
+```bash
 php artisan vendor:publish --provider="IrfanChowdhury\VersionElevate\VersionElevateServiceProvider"
 ```
 
 Service Provider Registration In `config/app.php`, add in providers array -
+
 ```php
 'providers' => [
     /*
@@ -118,3 +119,6 @@ Packagist : https://packagist.org/packages/irfan-chowdhury/version-elevate
 
 ## Credits
 - Structure follow from - [spatie/package-skeleton-laravel](https://github.com/spatie/package-skeleton-laravel)
+- Laravel Testing Helper for Packages Development:  [testbench](https://github.com/orchestral/testbench)
+- [PHP
+testing framework](https://pestphp.com/) 

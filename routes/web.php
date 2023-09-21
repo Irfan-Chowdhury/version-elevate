@@ -16,6 +16,9 @@ use IrfanChowdhury\VersionElevate\Http\Controllers\DashboardController;
 |
 */
 
+Route::get('/php-unit', function () {
+    return 'ok';
+});
 
 Route::get('/version-elevate-dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
@@ -32,3 +35,5 @@ Route::controller(ClientAutoUpdateController::class)->group(function () {
     Route::get('/new-release', 'newVersionReleasePage')->name('new-release');
     Route::post('version-upgrade', 'versionUpgradeProcees')->name('version-upgrade');
 });
+
+

@@ -1,10 +1,9 @@
 <?php
+declare(strict_types=1);
 
 namespace IrfanChowdhury\VersionElevate\Http\Controllers;
 
 use IrfanChowdhury\VersionElevate\Traits\AutoUpdateTrait;
-use Illuminate\Http\Request;
-use NumberToWords\NumberToWords;
 
 class DashboardController extends Controller
 {
