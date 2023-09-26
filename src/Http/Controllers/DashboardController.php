@@ -13,6 +13,7 @@ class DashboardController extends Controller
     {
         $autoUpdateData = $this->general();
         $alertVersionUpgradeEnable = $autoUpdateData['alertVersionUpgradeEnable'];
+
         return view('version-elevate::dashboard', compact('alertVersionUpgradeEnable'));
     }
 }

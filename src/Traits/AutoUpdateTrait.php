@@ -6,34 +6,6 @@ namespace IrfanChowdhury\VersionElevate\Traits;
 
 trait AutoUpdateTrait
 {
-    protected function isServerConnectionOk($targetURL): bool
-    {
-        $ch = curl_init($targetURL.'/api/fetch-data-general');
-
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 10); // Set the timeout to 10 seconds
-        $response = curl_exec($ch);
-        $error = curl_error($ch);
-        curl_close($ch);
-
-        $result = json_decode($response);
-
-        return isset($result) && ! empty($result) ? true : false;
-    }
-
-    protected function getDemoGeneralDataByCURL($targetURL): ?object
-    {
-        $curl = curl_init();
-        curl_setopt_array($curl, [
-            CURLOPT_RETURNTRANSFER => 1,
-            CURLOPT_URL => $targetURL.'/api/fetch-data-general',
-        ]);
-        $response = curl_exec($curl);
-        curl_close($curl);
-
-        return json_decode($response, false);
-    }
-
     /*
     |============================================================
     | # For Version Upgrade - you should follow these point in DEMO :
@@ -73,7 +45,35 @@ trait AutoUpdateTrait
         return $returnData;
     }
 
-    protected function isAlertVersionUpgradeEnable($latestVersionUpgradeEnable, $productMode, $minimumRequiredVersion, $clientVersionNumber, $demoVersionNumber)
+    protected function isServerConnectionOk(string $targetURL): bool
+    {
+        $ch = curl_init($targetURL.'/api/fetch-data-general');
+
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10); // Set the timeout to 10 seconds
+        $response = curl_exec($ch);
+        $error = curl_error($ch);
+        curl_close($ch);
+
+        $result = json_decode($response);
+
+        return isset($result) && ! empty($result) ? true : false;
+    }
+
+    protected function getDemoGeneralDataByCURL(string $targetURL): ?object
+    {
+        $curl = curl_init();
+        curl_setopt_array($curl, [
+            CURLOPT_RETURNTRANSFER => 1,
+            CURLOPT_URL => $targetURL.'/api/fetch-data-general',
+        ]);
+        $response = curl_exec($curl);
+        curl_close($curl);
+
+        return json_decode($response, false);
+    }
+
+    protected function isAlertVersionUpgradeEnable(bool $latestVersionUpgradeEnable, string $productMode, string $minimumRequiredVersion, string $clientVersionNumber, string $demoVersionNumber)
     {
         $isClientExceedMinimumRequiredVersion = $this->isClientExceedMinimumRequiredVersion($minimumRequiredVersion, $clientVersionNumber);
         $isTargetedVersionGreater = self::compareVersionNumber($clientVersionNumber, $demoVersionNumber);
@@ -85,7 +85,7 @@ trait AutoUpdateTrait
         return false;
     }
 
-    protected function isClientExceedMinimumRequiredVersion($minimumRequiredVersion, $clientVersionNumber): bool
+    protected function isClientExceedMinimumRequiredVersion(string $minimumRequiredVersion, string $clientVersionNumber): bool
     {
         if ($minimumRequiredVersion === $clientVersionNumber) {
             return true;
@@ -94,7 +94,7 @@ trait AutoUpdateTrait
         }
     }
 
-    protected static function compareVersionNumber($clientVersionNumber, $demoVersionNumber): bool
+    protected static function compareVersionNumber(string $clientVersionNumber, string $demoVersionNumber): bool
     {
         $clientVersionArray = explode('.', $clientVersionNumber);
         $demoVersionArray = explode('.', $demoVersionNumber);

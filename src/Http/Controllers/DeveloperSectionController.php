@@ -4,6 +4,7 @@ namespace IrfanChowdhury\VersionElevate\Http\Controllers;
 
 use Illuminate\Http\Request;
 use IrfanChowdhury\VersionElevate\Http\Requests\DeveloperSectionRequest;
+use IrfanChowdhury\VersionElevate\Http\Requests\VersionUpgradeRequest;
 use IrfanChowdhury\VersionElevate\Traits\ENVFilePutContent;
 use IrfanChowdhury\VersionElevate\Traits\JSONFileTrait;
 
@@ -51,8 +52,20 @@ class DeveloperSectionController
         ]);
     }
 
-    public function versionUpgradeSetting(Request $request)
+    public function versionUpgradeSetting(VersionUpgradeRequest $request)
     {
+        foreach($request->file_name as $item) {
+            if($item===null) {
+                return redirect()->back()->withErrors('Files can not be null.');
+            }
+        }
+
+        foreach($request->text as $item) {
+            if($item===null) {
+                return redirect()->back()->withErrors('Logs can not be null.');
+            }
+        }
+
         $data = $this->filesAndLogManage($request);
 
         $this->wrtieDataInJSON($data, 'track/fetch-data-upgrade.json');
