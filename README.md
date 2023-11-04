@@ -40,10 +40,10 @@ Service Provider Registration In `config/app.php`, add in providers array -
 
 #### Environement Variable (.ENV) 
 ```php
-# DEMO | DEVELOPER | CLIENT)
-APP_URL="https://your_domain.com"
+# DEMO | DEVELOPER | CLIENT
 PRODUCT_MODE=DEMO 
 VERSION=1.2.3
+TARGET_URL="https://your_domain.com"
 ```
 Here we used <b>DEMO</b> which indicate the original app which is now online server.
 
