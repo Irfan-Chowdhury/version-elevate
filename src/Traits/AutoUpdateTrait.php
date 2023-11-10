@@ -21,10 +21,9 @@ trait AutoUpdateTrait
         $returnData = [];
         $alertVersionUpgradeEnable = false;
         $targetURL = config('version_elevate.target_url');
-
         $isServerConnectionOk = $this->isServerConnectionOk($targetURL);
 
-        if (! $isServerConnectionOk) {
+        if (!$isServerConnectionOk) {
             $returnData['alertVersionUpgradeEnable'] = $alertVersionUpgradeEnable;
 
             return $returnData;
@@ -52,12 +51,14 @@ trait AutoUpdateTrait
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_TIMEOUT, 10); // Set the timeout to 10 seconds
         $response = curl_exec($ch);
-        $error = curl_error($ch);
         curl_close($ch);
 
+        if(empty($response)) {
+            return false;
+        }
         $result = json_decode($response);
 
-        return isset($result) && ! empty($result) ? true : false;
+        return isset($result) ? true : false;
     }
 
     protected function getDemoGeneralDataByCURL(string $targetURL): ?object
@@ -137,3 +138,4 @@ trait AutoUpdateTrait
         return $versionConvertNumber;
     }
 }
+

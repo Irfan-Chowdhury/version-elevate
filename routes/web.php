@@ -16,10 +16,6 @@ use IrfanChowdhury\VersionElevate\Http\Controllers\DashboardController;
 |
 */
 
-Route::get('/php-unit', function () {
-    return 'ok';
-});
-
 Route::get('/version-elevate-dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
 // Auto Update

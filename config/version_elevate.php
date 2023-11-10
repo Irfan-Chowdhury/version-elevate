@@ -26,19 +26,7 @@ return
         */
 
         'target_url' => env('TARGET_URL',''),
-
-        /*
-        |--------------------------------------------------------------------------
-        | Files Directory Name
-        |--------------------------------------------------------------------------
-        |
-        | For version upgrade, you need to keep relevant files in a directory on your server.
-        | If your website url is www.xyz.com, and file directory name is "updated_files",
-        | then your url will be "www.xyz.com/updated_files"
-        |
-        */
-        'directory_name' => env('DIRECTORY_NAME',''),
-
     ];
+
 
 
